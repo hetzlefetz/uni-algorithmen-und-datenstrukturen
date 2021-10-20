@@ -213,4 +213,37 @@ public class AnalyzeWords1Test {
 		assertEquals("Sie sollten in words[] suchen, nicht in content! <div/> ist kein Wort", 0, aw.frequency("div"));
 	}
 
+	@Test
+	public void testMerge() {
+		var arr1 = new int[] { 1, 2, 3 };
+		var arr2 = new int[] { 4, 5, 6 };
+		var res = AnalyzeWords1.merge(arr1, arr2);
+		assertEquals(1, res[0]);
+		assertEquals(2, res[1]);
+		assertEquals(3, res[2]);
+		assertEquals(4, res[3]);
+		assertEquals(5, res[4]);
+		assertEquals(6, res[5]);
+
+		res = AnalyzeWords1.merge(arr2, arr1);
+
+		assertEquals(1, res[0]);
+		assertEquals(2, res[1]);
+		assertEquals(3, res[2]);
+		assertEquals(4, res[3]);
+		assertEquals(5, res[4]);
+		assertEquals(6, res[5]);
+
+		arr1 = new int[] { 3, 4, 5 };
+		arr2 = new int[] { 2, 3, 7 };
+		res = AnalyzeWords1.merge(arr1, arr2);
+
+		assertEquals(2, res[0]);
+		assertEquals(3, res[1]);
+		assertEquals(3, res[2]);
+		assertEquals(4, res[3]);
+		assertEquals(5, res[4]);
+		assertEquals(7, res[5]);
+	}
+
 }
