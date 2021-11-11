@@ -3,6 +3,7 @@ package de.vfh.algodat;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.security.InvalidAlgorithmParameterException;
+import java.util.Arrays;
 
 class SortedWord implements Comparable<SortedWord> {
     private String _word;
@@ -44,10 +45,6 @@ class SortedWord implements Comparable<SortedWord> {
 
 }
 
-enum SORT_METHOD {
-    QUICK_SORT, MERGE_SORT, DUMB_SORT,
-}
-
 public class AnalyzeWords2 {
 
     private DownloadPage _page;
@@ -76,11 +73,11 @@ public class AnalyzeWords2 {
             _wordsSorted = Utils.concat(_wordsSorted, new SortedWord(_words[i], i), SortedWord.class);
         }
         System.out.println("IN:");
-        Utils.debugArray(_wordsSorted);
+        // Utils.debugArray(_wordsSorted);
 
         _wordsSorted = AnalyzeWords2.sort(_wordsSorted, _sortMethodToUse, SortedWord.class);
         System.out.println("Out:");
-        Utils.debugArray(_wordsSorted);
+        // Utils.debugArray(_wordsSorted);
     }
 
     /**
@@ -99,16 +96,12 @@ public class AnalyzeWords2 {
         for (int i = 0; i < _wordsSorted.length; i++) {
             _totalCount++;
             if (_wordsSorted[i].getWord().equals(word)) {
-                for (int j = i; j < _wordsSorted.length; j++) {
-                    _totalCount++;
-                    if (_wordsSorted[j].getWord().equals(word)) {
-                        ret++;
-                    } else {
-                        _totalCount -= 1; // substract 1 for double ++ of first iteration in 108
-                        return ret; // early return
-                    }
+                ret++;
+                if (i + 1 >= _wordsSorted.length || !_wordsSorted[i + 1].getWord().equals(word)) {
+                    return ret;
                 }
             }
+
         }
         return ret;
     }
@@ -124,8 +117,21 @@ public class AnalyzeWords2 {
     }
 
     private String _mostFrequent() {
-        _totalCount++;
-        return _wordsSorted[_wordsSorted.length - 1].getWord();
+
+        var currentMaxWord = "";
+        var currentMaxCount = 0;
+        for (int i = 0; i < _wordsSorted.length;) { // +n
+            _totalCount++;
+            var count = _frequency(_wordsSorted[i].getWord());
+            if (count > currentMaxCount) {
+                currentMaxCount = count;
+                currentMaxWord = _wordsSorted[i].getWord();
+            }
+            i += count;
+            if (i >= _wordsSorted.length)
+                break;
+        }
+        return currentMaxWord;
 
     }
 
@@ -192,6 +198,32 @@ public class AnalyzeWords2 {
         return currentMin;
     }
 
+    public int isStoredAtPosition(String word) {
+        return search(word, _wordsSorted);
+    }
+
+    private int search(String needle, SortedWord[] haystack) {
+        int middle = haystack.length / 2;
+        if (haystack[middle].getWord().equals(needle)) {
+            return haystack[middle].getOriginalPosition();
+        }
+        if (needle.compareTo(haystack[middle].getWord()) < 0) {
+            return search(needle, Arrays.copyOfRange(haystack, 0, middle)); // search left
+        } else {
+            return search(needle, Arrays.copyOfRange(haystack, middle + 1, haystack.length - 1)); // search right
+        }
+    }
+
+    public String wordAtPosition(int i) {
+        for (var w : _wordsSorted) { // here accessing the original array would be more effective (O(1))
+            if (w.getOriginalPosition() == i) {
+                return w.getWord();
+            }
+
+        }
+        return "";
+    }
+
     /**
      * liefert ein Array aller Wörter, die in einer Distanz von maximal dist zu dem
      * Wort stehen (davor oder danach). Das Array kann doppelte Einträge enthalten,
@@ -231,9 +263,39 @@ public class AnalyzeWords2 {
             return mergeSort(array, type);
         case QUICK_SORT:
             return quickSort(array, type);
+        case BUBBLE_SORT:
+            return bubbleSort(array);
         default:
             throw new InvalidAlgorithmParameterException();
         }
+    }
+
+    private static <T extends Comparable<T>> T[] bubbleSort(T[] unsorted) {
+        var n = unsorted.length;
+        var swapped = false;
+        for (int i = 0; i < n - 1; i++) {
+            swapped = false;
+            for (int j = 0; j < n - i - 1; j++) {
+                if (unsorted[j].compareTo(unsorted[j + 1]) > 0) {
+                    swapped = true;
+                    // swap arr[j+1] and arr[j]
+                    T temp = unsorted[j];
+                    unsorted[j] = unsorted[j + 1];
+                    unsorted[j + 1] = temp;
+                }
+            }
+            if (swapped == false) {
+                break;
+            }
+        }
+        return unsorted;
+    }
+
+    private static <T extends Comparable<T>> T[] swap(int i1, int i2, T[] array) {
+        T tmp = array[i1];
+        array[i1] = array[i2];
+        array[i2] = tmp;
+        return array;
     }
 
     @SuppressWarnings("unchecked")

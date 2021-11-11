@@ -31,5 +31,4 @@ public class Utils {
         result[result.length - 1] = value;
         return result;
     }
-
 }
