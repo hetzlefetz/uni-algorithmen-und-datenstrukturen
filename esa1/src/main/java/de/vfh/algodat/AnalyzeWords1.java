@@ -55,35 +55,6 @@ public class AnalyzeWords1 {
         return _mostFrequent();
     }
 
-    public static int[] merge(int[] a, int[] b) {
-        var result = new int[a.length + b.length];
-        var currentLeft = 0;
-        var currentRight = 0;
-        var lastIndex = 0;
-        for (int i = 0; i < Integer.max(a.length, b.length); i++) {
-            if (currentLeft < a.length && currentRight < b.length) {
-                if (a[currentLeft] <= b[currentRight]) {
-                    result[i] = a[currentLeft++];
-
-                } else {
-                    result[i] = b[currentRight++];
-                }
-            }
-            lastIndex++;
-        }
-        if (currentLeft < a.length) {
-            for (int i = currentLeft; i < a.length; i++) {
-                result[lastIndex++] = a[i];
-            }
-        }
-        if (currentRight < b.length) {
-            for (int i = currentRight; i < b.length; i++) {
-                result[lastIndex++] = b[i];
-            }
-        }
-        return result;
-    }
-
     private String _mostFrequent() {
         var currentMaxWord = "";
         var currentMaxCount = 0;
@@ -119,25 +90,15 @@ public class AnalyzeWords1 {
         return res.toArray(new String[0]);
     }
 
-    private int firstIndexOf(String word, int startIndex) {
-        for (int i = 0; i < words.length; i++) {
-            totalCount++;
-            if (words[i].equals(word)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
     private Integer[] allIndicesOf(String word) {
-        var result = new Stack<Integer>();
+        var result = new Integer[0];
         for (int i = 0; i < words.length; i++) {
             totalCount++;
             if (words[i].equals(word)) {
-                result.push(i);
+                result = Utils.concat(result, i, Integer.class);
             }
         }
-        return result.toArray(new Integer[0]);
+        return result;
     }
 
     /**
@@ -160,15 +121,21 @@ public class AnalyzeWords1 {
     }
 
     private int _distance(String string1, String string2) {
-
-        var indexS1 = firstIndexOf(string1, 0);
-        var indexS2 = firstIndexOf(string2, string1.equals(string2) ? indexS1 + 1 : 0);
-
-        if (indexS1 == -1 || indexS2 == -1) {
+        var indexS1 = allIndicesOf(string1);
+        var indexS2 = allIndicesOf(string2);
+        if (indexS1.length == 0 || indexS2.length == 0)
             return Integer.MAX_VALUE;
+        var currentMin = Integer.MAX_VALUE;
+        for (int i = 0; i < indexS2.length; i++) {
+            totalCount++;
+            for (int j = 0; j < indexS1.length; j++) {
+                totalCount++;
+                var tmp = indexS2[i] - indexS1[j];
+                if (tmp != 0 && Math.abs(currentMin) > Math.abs(tmp))
+                    currentMin = tmp;
+            }
         }
-        return indexS2 - indexS1;
-
+        return currentMin;
     }
 
     /**
@@ -186,17 +153,19 @@ public class AnalyzeWords1 {
     }
 
     private String[] _wordsNear(String string, int dist) {
-        var result = new Stack<String>();
+        var result = new String[0];
         for (var index : allIndicesOf(string)) {
+            totalCount++;
             for (int i = 1; i <= dist; i++) {
                 if (index - i >= 0) {
-                    result.push(words[index - i]);
+                    result = Utils.concat(result, words[index - 1], String.class);
                 }
                 if (index + i < words.length) {
-                    result.push(words[index + i]);
+                    result = Utils.concat(result, words[index + 1], String.class);
                 }
             }
         }
-        return result.toArray(new String[0]);
+        return result;
     }
+
 }

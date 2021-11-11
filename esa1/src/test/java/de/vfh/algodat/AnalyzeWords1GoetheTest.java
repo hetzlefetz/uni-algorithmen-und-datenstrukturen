@@ -26,7 +26,8 @@ public class AnalyzeWords1GoetheTest {
 	@Test
 	public void testDistanceGoethe() throws IOException {
 		AnalyzeWords1 aw = new AnalyzeWords1("file:TestMaterial/wikiGoethe.html");
-		assertEquals("Abstand \"Halbgötter\", \"Götter\"", -8987, aw.distance("Halbgötter", "Götter"));
+		assertEquals("Abstand \"Halbgötter\", \"Götter\"", -2, aw.distance("Halbgötter", "Götter"));
+
 	}
 
 	@Test
