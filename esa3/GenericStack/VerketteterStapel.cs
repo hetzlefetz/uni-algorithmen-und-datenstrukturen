@@ -60,7 +60,7 @@ namespace GenericStack
       {
         return ReferenceEquals(this, obj);
       }
-      return _head.Equals(tmp.Head)M
+      return _head.Equals(tmp.Head);
     }
   }
 }
