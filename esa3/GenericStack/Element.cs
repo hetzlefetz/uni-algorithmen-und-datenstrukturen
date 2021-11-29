@@ -1,4 +1,6 @@
-﻿namespace GenericStack
+﻿using System;
+
+namespace GenericStack
 {
   public class Element<T>
   {
@@ -29,6 +31,28 @@
         return $"{Key},{Next}";
       }
 
+    }
+    public override int GetHashCode()
+    {
+      return HashCode.Combine(Key, Next);
+    }
+    public override bool Equals(object obj)
+    {
+      if (obj == null) return false;      
+      var tmp = obj as Element<T>;
+      if (tmp == null) return false;
+      if(Next == null && tmp.Next != null || Next != null && tmp.Next == null)
+      {
+        return false;
+      }
+      if(Next != null&& tmp.Next != null)
+      {
+        return Key.Equals(tmp.Key) && Next.Equals(tmp);
+      }
+      else
+      {
+        return Key.Equals(tmp.Key);
+      }
     }
   }
 }

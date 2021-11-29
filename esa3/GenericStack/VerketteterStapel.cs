@@ -33,6 +33,7 @@ namespace GenericStack
       }
       return _head.Key;
     }
+    public Element<T> Head => _head;
     public override string ToString()
     {
       if (_head == null)
@@ -40,6 +41,26 @@ namespace GenericStack
         return "[]";
       }
       return $"[{_head}]";
+    }
+    public override int GetHashCode()
+    {
+      return HashCode.Combine(_head);
+    }
+
+    public override bool Equals(object obj)
+    {
+      if (obj == null) return false;
+      var tmp = obj as VerketteterStapel<T>;
+      if (tmp == null) return false;
+      if(_head == null && tmp.Head != null || _head != null && tmp.Head == null)
+      {
+        return false;
+      }
+      if(_head == null && tmp.Head == null)
+      {
+        return ReferenceEquals(this, obj);
+      }
+      return _head.Equals(tmp.Head)M
     }
   }
 }
