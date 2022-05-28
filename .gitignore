@@ -22,7 +22,7 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-esa3/**/.vs
-esa3/**/*.dll
-esa3/**/bin
-esa3/**/obj
+**/.vs
+**/*.dll
+**/bin
+**/obj
